@@ -17,19 +17,11 @@ public class Abrigo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     private String nome;
 
-    @NotBlank
-    @Pattern(regexp = "\\(?\\d{2}\\)?\\d?\\d{4}-?\\d{4}")
     private String telefone;
 
-    @NotBlank
-    @Email
     private String email;
-
-    @OneToMany(mappedBy = "abrigo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Pet> pets;
 
     @Override
     public boolean equals(Object o) {
@@ -85,11 +77,4 @@ public class Abrigo {
         this.email = email;
     }
 
-    public List<Pet> getPets() {
-        return pets;
-    }
-
-    public void setPets(List<Pet> pets) {
-        this.pets = pets;
-    }
 }

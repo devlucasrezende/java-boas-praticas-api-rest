@@ -57,6 +57,8 @@ public class Pet {
         this.adotado = false;
     }
 
+    public Pet() {}
+
     @Override
     public int hashCode() {
         return Objects.hash(id);

@@ -18,10 +18,8 @@ public class Tutor {
 
     private String nome;
 
-    @Pattern(regexp = "\\(?\\d{2}\\)?\\d?\\d{4}-?\\d{4}")
     private String telefone;
 
-    @Email
     private String email;
 
     @OneToMany(mappedBy = "tutor")
