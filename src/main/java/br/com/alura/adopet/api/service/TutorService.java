@@ -1,5 +1,7 @@
 package br.com.alura.adopet.api.service;
 
+import br.com.alura.adopet.api.dto.TutorDto;
+import br.com.alura.adopet.api.exceptions.ValidacaoException;
 import br.com.alura.adopet.api.model.Tutor;
 import br.com.alura.adopet.api.repository.TutorRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,28 +20,18 @@ public class TutorService {
         this.tutorRepository = tutorRepository;
     }
 
-    public void cadastrar(Tutor tutor) {
+    public void cadastrar(TutorDto dto) {
+        boolean jaCadastrado = tutorRepository.existsByTelefoneOrEmail(dto.telefone(), dto.email());
+
+        if (jaCadastrado) {
+            throw new ValidacaoException("Dados já cadastrados para outro tutor!");
+        }
+        Tutor tutor = new Tutor(dto);
         tutorRepository.save(tutor);
     }
 
-    public boolean podeCadastrar(Tutor tutor) {
-
-        boolean telefoneJaCadastrado = tutorRepository.existsByTelefone(tutor.getTelefone());
-        boolean emailJaCadastrado = tutorRepository.existsByEmail(tutor.getEmail());
-
-        return !telefoneJaCadastrado && !emailJaCadastrado;
-    }
-
-    public void atualizar(Tutor tutor) {
-        Tutor tutorBanco;
-        if (tutorRepository.findById(tutor.getId()).isPresent()) {
-            tutorBanco = tutorRepository.findById(tutor.getId()).get();
-            tutorBanco.setEmail(tutor.getEmail());
-            tutorBanco.setNome(tutor.getNome());
-            tutorBanco.setTelefone(tutorBanco.getTelefone());
-            tutorBanco.setAdocoes(tutor.getAdocoes());
-        } else {
-            throw new EntityNotFoundException("Tutor não encontrado");
-        }
+    public void atualizar(TutorDto dto) {
+        Tutor tutor = tutorRepository.getReferenceById(dto.idTutor());
+        tutor.atualizarTutor(dto);
     }
 }

@@ -1,8 +1,9 @@
 package br.com.alura.adopet.api.controller;
 
-import br.com.alura.adopet.api.model.Tutor;
-import br.com.alura.adopet.api.repository.TutorRepository;
+import br.com.alura.adopet.api.dto.TutorDto;
+import br.com.alura.adopet.api.exceptions.ValidacaoException;
 import br.com.alura.adopet.api.service.TutorService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,19 +23,23 @@ public class TutorController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<String> cadastrar(@RequestBody @Valid Tutor tutor) {
-        if (!tutorService.podeCadastrar(tutor)) {
-            return ResponseEntity.badRequest().body("Dados já cadastrados para outro tutor!");
-        } else {
-            tutorService.cadastrar(tutor);
+    public ResponseEntity<String> cadastrar(@RequestBody @Valid TutorDto dto) {
+        try {
+            tutorService.cadastrar(dto);
             return ResponseEntity.ok().build();
+        } catch (ValidacaoException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity<String> atualizar(@RequestBody @Valid Tutor tutor) {
-        tutorService.atualizar(tutor);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> atualizar(@RequestBody @Valid TutorDto dto) {
+        try {
+            tutorService.atualizar(dto);
+            return ResponseEntity.ok().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
