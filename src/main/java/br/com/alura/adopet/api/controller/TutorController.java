@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tutores")
 public class TutorController {
@@ -19,6 +21,11 @@ public class TutorController {
     @Autowired
     public TutorController(TutorService tutorService) {
         this.tutorService = tutorService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TutorDto>> listar() {
+        return ResponseEntity.ok(tutorService.listar());
     }
 
     @PostMapping
@@ -38,7 +45,7 @@ public class TutorController {
         try {
             tutorService.atualizar(dto);
             return ResponseEntity.ok().build();
-        } catch (EntityNotFoundException e) {
+        } catch (ValidacaoException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

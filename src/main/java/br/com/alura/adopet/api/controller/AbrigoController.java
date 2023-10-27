@@ -9,6 +9,7 @@ import br.com.alura.adopet.api.model.Abrigo;
 import br.com.alura.adopet.api.service.AbrigoService;
 import br.com.alura.adopet.api.service.PetService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -46,12 +47,13 @@ public class AbrigoController {
     }
 
     @GetMapping("/{idOuNome}/pets")
-    public ResponseEntity<List<PetDto>> listarPets(@PathVariable String idOuNome) {
+    public ResponseEntity<?> listarPets(@PathVariable String idOuNome) {
         try {
             List<PetDto> petsDoAbrigo = abrigoService.listarPetsDoAbrigo(idOuNome);
             return ResponseEntity.ok(petsDoAbrigo);
         } catch (ValidacaoException exception) {
-            return ResponseEntity.notFound().build();
+            ValidacaoException e = new ValidacaoException(exception.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -63,7 +65,7 @@ public class AbrigoController {
             petService.cadastrarPet(abrigo, dto);
             return ResponseEntity.ok().build();
         } catch (ValidacaoException exception) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body(exception.getMessage());
         }
     }
 
